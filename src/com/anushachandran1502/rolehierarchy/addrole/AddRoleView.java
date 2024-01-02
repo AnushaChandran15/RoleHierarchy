@@ -1,11 +1,14 @@
 package com.anushachandran1502.rolehierarchy.addrole;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
-import com.anushachandran1502.rolehierarchy.dto.Employee;
+import com.anushachandran1502.rolehierarchy.addsubrole.AddSubRoleView;
+import com.anushachandran1502.rolehierarchy.dto.Role;
 
 public class AddRoleView {
-	Employee emp=null;
+	
+	Role emp=null;
 	AddRoleViewModel addRole;
 	Scanner scanner;
 	public AddRoleView()
@@ -13,9 +16,12 @@ public class AddRoleView {
 		addRole=new AddRoleViewModel(this);
 		scanner=new Scanner(System.in);
 	}
-	public void roleCreation() {
+	public void roleCreation() throws SQLException {
+		AddSubRoleView subRole=new AddSubRoleView();
 		System.out.println("Enter the Role");
-		String role=scanner.nextLine();
-		System.out.println(addRole.check(role));
+		String rootRole=scanner.nextLine();
+		Role role=new Role(rootRole);
+		addRole.check(role);
+		subRole.subRoleCreate();
 	}
 }

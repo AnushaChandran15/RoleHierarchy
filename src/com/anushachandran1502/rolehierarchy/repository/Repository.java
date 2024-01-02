@@ -1,8 +1,12 @@
 package com.anushachandran1502.rolehierarchy.repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
-import com.anushachandran1502.rolehierarchy.dto.Employee;
+import com.anushachandran1502.rolehierarchy.dto.Role;
 //import java.sql.DriverManager;
 
 
@@ -12,7 +16,6 @@ public class Repository {
 	String userName;
 	String passWord;
 	Connection con;
-	Employee employee;
 	private Repository()
 	{
 		 url = "jdbc:mysql://localhost:3306/RoleHierarchy";
@@ -34,21 +37,44 @@ public class Repository {
 		}
 		return repo;
 	}
-	public String insertRole(String role) {
-		employee=new Employee();
-		employee.setRole(role);
+	public void insertRole(Role role) {
 		try {
-			String query = "INSERT INTO  role (roleName,active_Stutus) VALUES('"+employee.getRole()+"',"+true+")";
+String query = "INSERT INTO  role (roleName,reporter_role) VALUES('"+role.getRole()+"','"+role.getReporterName()+"')";
 			Statement s=con.createStatement();
 			s.executeUpdate(query);
-			con.close();
-			return "CEO";
 		} 
 		 catch (Exception e) {
 			e.printStackTrace();
 		}
-return "Role not added";
 			}
-
-
+	public List<Role> getRolesList() throws SQLException {
+		
+		ArrayList<Role> roles=new ArrayList<Role>();
+		Queue<Role> roleQueue = new LinkedList<Role>();
+       String query ="SELECT * FROM role WHERE roleName='CEO";
+       Statement statement=con.createStatement();
+       ResultSet resultSet=statement.executeQuery(query);
+       Role role=null;
+       if(resultSet.next())
+       {
+    	   role=new Role(resultSet.getString("roleName"),resultSet.getString("reporter_role"));
+       }
+       roles.add(role);
+       roleQueue.add(role);
+       	while(!roleQueue.isEmpty())
+       	{
+       		Role del=roleQueue.poll();
+       		query = "SELECT * FROM table_role WHERE reporting_role = '" + del.getRole() + "'";
+       		statement = con.createStatement();
+       		resultSet = statement.executeQuery(query);
+       		while (resultSet.next()) {
+       			String roleName = resultSet.getString("roleName");
+       			String reportingRoleName = resultSet.getString("reporter_role");
+       			role = new Role(roleName, reportingRoleName);
+       			roles.add(role);
+       			roleQueue.add(role);
+       		}
+       	}
+		return roles;
+	}
 }

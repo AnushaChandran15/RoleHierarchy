@@ -1,5 +1,6 @@
 package com.anushachandran1502.rolehierarchy.addrole;
 
+import com.anushachandran1502.rolehierarchy.dto.Role;
 import com.anushachandran1502.rolehierarchy.repository.Repository;
 
 public class AddRoleViewModel {
@@ -12,12 +13,11 @@ public class AddRoleViewModel {
 		
 	}
 
-	public String check(String role) {
+	public void check(Role role) {
 		String result="";
-		if(!role.equals(role))
+		if(!role.equals(""))
 		{
-			result=repo.insertRole(role);
+			repo.insertRole(role);
 		}
-		return result;
 	}
 }
